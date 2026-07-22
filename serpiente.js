@@ -4,8 +4,12 @@
     const ctx = canvas.getContext("2d");
 
     const TAMANIO_CELDA=25;
-
-    
+    const SERPIENTE = [
+    { x: (canvas.width/2)/TAMANIO_CELDA, y: (canvas.height/2)/TAMANIO_CELDA },
+    { x: ((canvas.width/2)/TAMANIO_CELDA)-1, y: ((canvas.height/2)/TAMANIO_CELDA) },
+    { x: ((canvas.width/2)/TAMANIO_CELDA)-2, y: ((canvas.height/2)/TAMANIO_CELDA) },
+    { x: ((canvas.width/2)/TAMANIO_CELDA), y: ((canvas.height/2)/TAMANIO_CELDA)+1 }
+]
 
     // Primera pintura del juego al cargar la página
     dibujarTodo();
@@ -21,21 +25,9 @@
     function dibujarTodo() {
     limpiarCanvas();
     dibujarTablero2();
-    pintarParte(5, 5);
-    pintarParte(10, 2);
-    pintarParte((canvas.height - TAMANIO_CELDA) / TAMANIO_CELDA,(canvas.width - TAMANIO_CELDA) / TAMANIO_CELDA);
-    pintarParte((canvas.height - TAMANIO_CELDA) / TAMANIO_CELDA, 10);
-    pintarParte(0, (canvas.width - TAMANIO_CELDA) / TAMANIO_CELDA);
-    pintarParte((canvas.height - TAMANIO_CELDA) / TAMANIO_CELDA, 0);
+    pintarSerpiente();
 }
 
-    function dibujarTablero(){
-      ctx.strokeStyle="rgba(187, 219, 43, 0.86)";
-      ctx.beginPath();
-      ctx.moveTo(0,0);
-      ctx.lineTo(100,100);
-      ctx.stroke();
-    }
 
     function dibujarTablero2(){
       for(let i=0;i<canvas.width;i+=TAMANIO_CELDA){
@@ -54,13 +46,24 @@
     }
     }
 
-    function pintarParte(lineaX, lineaY) {
+    function pintarParte(lineaX, lineaY, color) {
     let valorX = lineaX * TAMANIO_CELDA;
     let valorY = lineaY * TAMANIO_CELDA;
-    ctx.fillStyle = "yellow";
+    ctx.fillStyle = color;
     ctx.fillRect(valorX, valorY, TAMANIO_CELDA, TAMANIO_CELDA);
     ctx.strokeStyle="black";
     ctx.strokeRect(valorX, valorY, TAMANIO_CELDA, TAMANIO_CELDA);
+}
+
+function pintarSerpiente() {
+    for (let i = 0; i < SERPIENTE.length; i++) {
+        let elemento = SERPIENTE[i];
+        if (i === SERPIENTE.length - 1) {
+            pintarParte(elemento.x, elemento.y, "pink");
+        } else {
+            pintarParte(elemento.x, elemento.y, "yellow");
+        }
+    }
 }
 
 
