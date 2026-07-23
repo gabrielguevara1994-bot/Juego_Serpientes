@@ -10,6 +10,8 @@
     }
     let comidas=false
     let puntaje=0
+    let juegoFinalizado= true;
+    let velocidad = 300;
 
     const TAMANIO_CELDA=25;
     const SERPIENTE = [
@@ -117,11 +119,19 @@ function moverArriba(){
 }
 
 function cambiarDireccion(nuevaDireccion){
-    direccionActual=nuevaDireccion;
+    if (direccionActual === "derecha" && nuevaDireccion === "izquierda") return;
+    if (direccionActual === "izquierda" && nuevaDireccion === "derecha") return;
+    if (direccionActual === "arriba" && nuevaDireccion === "abajo") return;
+    if (direccionActual === "abajo" && nuevaDireccion === "arriba") return;
+
+    direccionActual = nuevaDireccion;
 }
 
 function iniciarJuego(){
-    intervaloSerpiente = setInterval(moverSerpiente,1000);
+    clearInterval(intervaloSerpiente); 
+    juegoFinalizado = false;
+
+    intervaloSerpiente = setInterval(moverSerpiente,velocidad);
 }
 
 function pausarJuego(){
@@ -141,6 +151,7 @@ function moverSerpiente(){
     if (direccionActual == "arriba"){
         moverArriba();
     }
+    verificarColicionBordes();
     if (atraparComida()) {
     puntaje += 1;
     document.getElementById("puntaje").innerText = puntaje;
@@ -171,6 +182,69 @@ function atraparComida(){
     }else {
         return false;
     }
+}
+
+function verificarColicionBordes() {
+    let cabeza = SERPIENTE[0];
+
+    let totalColumnas = canvas.width / TAMANIO_CELDA;
+    let totalFilas = canvas.height / TAMANIO_CELDA;
+
+    // Evaluamos si la cabeza tocó cualquiera de los 4 bordes
+    if (cabeza.x < 0 || cabeza.x >= totalColumnas || cabeza.y < 0 || cabeza.y >= totalFilas) {
+        pausarJuego();
+        deshabilitarBotones();
+        alert("GAME OVER");
+        document.getElementById("estado").innerHTML="GAME OVER"
+        juegoFinalizado= true;
+        puntaje = 0;
+        document.getElementById("puntaje").innerText = puntaje;
+        return true;
+    }
+}
+
+function reiniciarJuego() {
+    pausarJuego();
+    direccionActual = "derecha";
+
+    SERPIENTE.length = 0;
+    SERPIENTE.push(
+        { x: ((canvas.width / 2) / TAMANIO_CELDA), y: ((canvas.height / 2) / TAMANIO_CELDA) + 1 },
+        { x: (canvas.width / 2) / TAMANIO_CELDA, y: (canvas.height / 2) / TAMANIO_CELDA },
+        { x: ((canvas.width / 2) / TAMANIO_CELDA) - 1, y: ((canvas.height / 2) / TAMANIO_CELDA) },
+        { x: ((canvas.width / 2) / TAMANIO_CELDA) - 2, y: ((canvas.height / 2) / TAMANIO_CELDA) }
+    );
+
+    generarComida();
+    dibujarTodo();
+    juegoFinalizado = false;
+    habilitarBotones();
+}
+
+function deshabilitarBotones(){
+    let arriba = document.getElementById("arriba");
+    arriba.disabled = true;
+    let abajo = document.getElementById("abajo");
+    abajo.disabled = true;
+    let derecha = document.getElementById("derecha");
+    derecha.disabled = true;
+    let izquierda = document.getElementById("izquierda");
+    izquierda.disabled = true;
+    let iniciar = document.getElementById("iniciar");
+    iniciar.disabled = true;
+}
+
+function habilitarBotones(){
+    let arriba = document.getElementById("arriba");
+    arriba.disabled = false;
+    let abajo = document.getElementById("abajo");
+    abajo.disabled = false;
+    let derecha = document.getElementById("derecha");
+    derecha.disabled = false;
+    let izquierda = document.getElementById("izquierda");
+    izquierda.disabled = false;
+    let iniciar = document.getElementById("iniciar");
+    iniciar.disabled = false;
 }
 
 
